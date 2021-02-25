@@ -1,6 +1,7 @@
 module.exports = {
   title: 'ATaoYoyo',
   description: "ATaoYoyo's Blog",
+  dest: '/dist',
   head: [['link', { rel: 'icon', href: 'logo.png' }]],
   themeConfig: {
     nav: [
