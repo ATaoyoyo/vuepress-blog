@@ -8,5 +8,8 @@ module.exports = {
       { text: 'JavaScript', link: '/articles/JavaScript/目录.md' },
       { text: 'Github', link: 'https://github.com/ATaoyoyo' },
     ],
+    themeConfig: {
+      sidebar: 'auto',
+    },
   },
 }
