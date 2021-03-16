@@ -6,6 +6,7 @@ module.exports = {
     nav: [
       { text: 'Home', link: '/' },
       { text: 'JavaScript', link: '/articles/JavaScript/目录.md' },
+      { text: '面试', link: '/articles/Interview/目录.md' },
       { text: 'Github', link: 'https://github.com/ATaoyoyo' },
     ],
     themeConfig: {
