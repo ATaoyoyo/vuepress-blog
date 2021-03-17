@@ -192,3 +192,134 @@ console.log(Function.__proto__ === Function.prototype) // true
 构造函数原型的`__proto__`指向`Object`的原型。
 构造函数都是`Function`的实例。
 :::
+
+
+
+## 作用域与闭包
+
+### 作用域
+
+JavaScript中有三种作用域：**全局作用域**，**函数作用域**，**块级作用域**。
+
+#### 全局作用域
+
+顾名思义，定义在全局中的变量所处的作用域环境就是全局作用域。全局作用域中的变量可以被任意访问。
+
+```js
+let name = 'nick'
+
+function getName() {
+  console.log(name)
+}
+
+getName()         // nick
+console.log(name) // nick
+```
+
+### 函数作用域
+
+顾名思义，所处环境在函数中。函数作用域只能被当前作用域及内部作用域访问，无法被外部作用域访问。
+
+```js
+function foo() {
+  var name = 'nick'
+  console.log(name)
+}
+foo()             // nick
+console.log(name) // ReferenceError: name is not defined
+```
+
+### 块级作用域
+
+包含在代码块`{}`中的变量，所处环境就为块级作用域。块级作用域只能被当前作用域内访问，不能被外部访问(var除外)。
+
+```js
+{
+  var name = 'nick'
+  var age = 18
+
+  let hobby = 'run'
+  let eat = 'rice'
+
+  console.log(name, age, bobby, eat) // 'nick' 18 run rice
+}
+
+console.log(name, age, hobby, eat) // ReferenceError: hobby is not defined
+```
+
+
+### 闭包
+
+闭包是指能够访问自由变量的函数，而自由变量则是值在当前函数作用域中未定义，但是却被使用的变量。
+
+```js
+var name = 'nick'
+
+function getName() {
+  console.log(name)
+}
+
+getName() // 'nick'
+```
+
+对于自由变量的查找，是在函数定义的地方查找，而不是执行时。
+
+```js
+var name = 'nick'
+
+function getName() {
+  console.log(name)
+}
+
+function getOtherName() {
+  var name = 'mike'
+  getName()
+}
+
+getOtherName() // 'nick'
+```
+
+一般来说，有两种情况通常形成闭包：
+
+- 函数作为返回值
+- 函数作为参数
+
+并且上面两种情况的函数都保留了对外部作用域中变量的引用，这就形成了闭包。
+
+#### 闭包的使用场景
+
+##### setTimeout
+
+原生的`setTimeout`函数的第一个参数不能携带参数，可通过闭包实现。
+
+```js
+function getName(name) {
+  return function() {
+    console.log(name)
+  }
+}
+
+let func = getName('nick')
+
+setTimeout(func, 1000)
+```
+
+##### 封装私有变量
+
+```js
+function ownerVarible() {
+  let count = 0
+
+  return {
+    increment: function() {
+      return count += 1
+    }
+  }
+}
+
+let result = ownerVarible()
+
+console.log(result.increment()) // 1
+console.log(result.increment()) // 2
+console.log(result.increment()) // 3
+```
