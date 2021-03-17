@@ -1,6 +1,7 @@
 ---
 sidebar: auto
 ---
+
 # JavaScript
 
 ## 变量类型
@@ -28,16 +29,16 @@ JavaScript 变量类型分为**值类型**，**引用类型**；值类型存放�
 可以通过`typeof`关键字来判断一个变量的类型：
 
 ```js
-typeof 'nick'                  // 'string'
-typeof true                    // 'boolean'
-typeof 123                     // 'number'
-typeof undefined               // 'undefined'
-typeof Symbol('symbol')        // 'symbol'
-typeof BigInt('100')           // 'bigint'
+typeof 'nick' // 'string'
+typeof true // 'boolean'
+typeof 123 // 'number'
+typeof undefined // 'undefined'
+typeof Symbol('symbol') // 'symbol'
+typeof BigInt('100') // 'bigint'
 
-typeof null                    // 'object'
-typeof {}                      // 'object'
-typeof []                      // 'object'
+typeof null // 'object'
+typeof {} // 'object'
+typeof [] // 'object'
 typeof function() {} // 'function'
 ```
 
@@ -56,9 +57,9 @@ var str = 123 + '00'
 var str1 = 'str' + true
 var str2 = 'str' + 'ing'
 
-console.log(str)    // '12300'
-console.log(str1)   // 'strtrue'
-console.log(str2)   // 'string'
+console.log(str) // '12300'
+console.log(str1) // 'strtrue'
+console.log(str2) // 'string'
 ```
 
 ### 相等和全等
@@ -77,39 +78,37 @@ console.log(str2)   // 'string'
 
 ```js
 null == undefined // true
-false == 0        // true
-true == 1         // true
-true == '1'       // true
-100 == '100'      // true
-NaN == NaN        // false
-NaN != NaN        // true
+false == 0 // true
+true == 1 // true
+true == '1' // true
+100 == '100' // true
+NaN == NaN // false
+NaN != NaN // true
 ```
 
 使用全等符号`===`进行比较时，变量不会进行类型转换；也就是说，数据类型不同，就返回 false。
 
 ```js
-null === undefined  // false
-null === null       // true
-100 === '100'       // false
-'nick' === 'nick'   // true
-NaN === NaN         // false
+null === undefined // false
+null === null // true
+100 === '100' // false
+'nick' === 'nick' // true
+NaN === NaN // false
 ```
 
 ::: warning 注意
-NaN与任意值进行全等比较依然返回false，包括自身。
+NaN 与任意值进行全等比较依然返回 false，包括自身。
 :::
 
+### if 条件，逻辑运算
 
-### if条件，逻辑运算
-
-使用到if语句以及逻辑运算时，条件内的值最终都会转换为布尔值。
-
+使用到 if 语句以及逻辑运算时，条件内的值最终都会转换为布尔值。
 
 ## 原型和原型链
 
 ### `prototype`
 
-在JavaScript中，每个函数都会创建一个`prototype`属性，这个属性是一个对象，里面的属性与方法可以在实例中共享。`prototype`属性是通过调用构造函数穿件的对象的原型；也就是说，构造函数的原型就是`prototype`属性。
+在 JavaScript 中，每个函数都会创建一个`prototype`属性，这个属性是一个对象，里面的属性与方法可以在实例中共享。`prototype`属性是通过调用构造函数穿件的对象的原型；也就是说，构造函数的原型就是`prototype`属性。
 
 ```js
 function Person() {}
@@ -187,19 +186,17 @@ console.log(Function.__proto__ === Function.prototype) // true
 
 `instanceof`运算符用于检测构造函数的 `prototype` 属性是否出现在某个实例对象的原型链上。也可以理解为构造函数的`prototype`属性是否与实例的`__proto__`相等。
 
-::: tip 
+::: tip
 实例对象的`__proto__`指向创建它的构造函数的原型。
 构造函数原型的`__proto__`指向`Object`的原型。
 构造函数都是`Function`的实例。
 :::
 
-
-
 ## 作用域与闭包
 
 ### 作用域
 
-JavaScript中有三种作用域：**全局作用域**，**函数作用域**，**块级作用域**。
+JavaScript 中有三种作用域：**全局作用域**，**函数作用域**，**块级作用域**。
 
 #### 全局作用域
 
@@ -212,7 +209,7 @@ function getName() {
   console.log(name)
 }
 
-getName()         // nick
+getName() // nick
 console.log(name) // nick
 ```
 
@@ -225,13 +222,13 @@ function foo() {
   var name = 'nick'
   console.log(name)
 }
-foo()             // nick
+foo() // nick
 console.log(name) // ReferenceError: name is not defined
 ```
 
 ### 块级作用域
 
-包含在代码块`{}`中的变量，所处环境就为块级作用域。块级作用域只能被当前作用域内访问，不能被外部访问(var除外)。
+包含在代码块`{}`中的变量，所处环境就为块级作用域。块级作用域只能被当前作用域内访问，不能被外部访问(var 除外)。
 
 ```js
 {
@@ -246,7 +243,6 @@ console.log(name) // ReferenceError: name is not defined
 
 console.log(name, age, hobby, eat) // ReferenceError: hobby is not defined
 ```
-
 
 ### 闭包
 
@@ -312,8 +308,8 @@ function ownerVarible() {
 
   return {
     increment: function() {
-      return count += 1
-    }
+      return (count += 1)
+    },
   }
 }
 
@@ -323,3 +319,120 @@ console.log(result.increment()) // 1
 console.log(result.increment()) // 2
 console.log(result.increment()) // 3
 ```
+
+## JavaScript 创建对象方式
+
+### 对象字面量
+
+简单粗暴
+
+```js
+let person = {
+  name: 'nick',
+  age: 18,
+}
+```
+
+### 工厂模式
+
+工厂模式的主要工作原理是用函数来封装创建对象的细节，从而通过调用函数来 达到复用的目的。
+
+```js
+function createPerson(name, age) {
+  let o = new Object()
+  o.name = name
+  o.age = age
+  o.sayHi = function() {
+    console.log(this.name, this.age)
+  }
+
+  return o
+}
+
+let p1 = createPerson('nick', 18)
+let p2 = createPerson('mike', 20)
+
+p1.sayHi() // 'nick' 18
+p2.sayHi() // 'mike' 20
+```
+
+工厂模式能够解决创建多个类似对象的问题，但是没有解决对象标识问题，无法反应新创建的对象是什么类型。
+
+### 构造函数模式
+
+JavaScript 中每一个函数都可以作为构造函数，只要一个函数是通过 `new` 来调用的， 那么我们就可以把它称为构造函数。执行构造函数首先会创建一个对象，然后将对象的原型指向构造函数 的 `prototype` 属性，然后将执行上下文中的 `this` 指向这个对象，最后再执行整个函数，如果返回值不是 对象，则返回新建的对象。
+
+```js
+function Person(name, age) {
+  this.name = name
+  this.age = age
+  this.sayHi = function() {
+    console.log(this.name, this.age)
+  }
+}
+
+let p1 = new Person('nick', 18)
+let p2 = new Person('mike', 20)
+
+p1.sayHi() // 'nick' 18
+p2.sayHi() // 'mike' 20
+```
+
+构造函数模式和工厂模式大致相同，但是有以下几点不同：
+
+::: warning
+没有显示地创建对象。
+属性和方法直接赋值给了`this`。
+没有`return`。
+:::
+
+构造函数解决了对象类型识别的问题，但是内部定义的方法会在每个实例上都重新创建一遍，造成浪费。
+
+### `Object.create`
+
+该方法非常有用，因为它允许你为创建的对象选择一个原型对象，而不用定义构造函数，并且使用现有的对象来作为新创建对象的`__proto__`。
+
+```js
+const person = {
+  name: 'nick',
+  age: 18,
+  sayHi: function() {
+    console.log(this.name, this.age)
+  },
+}
+
+let p1 = Object.create(person)
+
+p1.name = 'mike'
+p1.age = 20
+
+p1.sayHi() // 'mike' 20
+person.sayHi() // 'nick' 18
+
+console.log(p1.__proto__ === person) // true
+```
+
+### 原型模式
+
+每一个函数都有一个 `prototype` 属性，这个属性是一个对象，它包含了通过构造函数创建的所有实例都能共享的属性和方法。因此我们可以使用原型对象来添加公用属性和方法，从而实现代码的复用。
+
+```js
+function Person(name, age) {
+  this.name = name
+  this.age = age
+}
+
+Person.prototype.sayHi = function() {
+  console.log(this.name, this.age)
+}
+
+let p1 = new Person('nick', 18)
+let p2 = new Person('mike', 20)
+
+p1.sayHi() // 'nick' 18
+p2.sayHi() // 'mike' 20
+```
+
+原型模式中，动态属性可以放在构造函数内，通过参数获取；共用的方法可以放在原型上，在实例间共享，重复使用。
+
+但是原型模式的问题也在于所有属性都能够在实例之间共享。这似乎没什么问题，但是原型中若是有引用类型的属性，则会造成混乱。
