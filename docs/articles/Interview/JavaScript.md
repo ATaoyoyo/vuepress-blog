@@ -436,3 +436,171 @@ p2.sayHi() // 'mike' 20
 原型模式中，动态属性可以放在构造函数内，通过参数获取；共用的方法可以放在原型上，在实例间共享，重复使用。
 
 但是原型模式的问题也在于所有属性都能够在实例之间共享。这似乎没什么问题，但是原型中若是有引用类型的属性，则会造成混乱。
+
+## 继承
+
+### 原型链继承
+
+主要继承方式。通过原型继承多个引用类型的属性和方法。
+
+```js
+function Person(name, age) {
+  this.name = name
+  this.age = age
+}
+
+Person.prototype.sayHi = function() {
+  console.log(this.name, this.age)
+}
+
+function Student(school) {
+  this.school = school
+}
+
+Student.prototype = new Person('nick', 18)
+
+let s1 = new Student('w3c')
+s1.sayHi() // 'nick' 18
+console.log(s1.school) // 'w3c'
+```
+
+原型链继承的缺点和之前通过原型模式创建对象一样，属性在实例间共享的问题。若是引用类型的属性，对其修改后，会影响到其他实例的属性。
+
+```js
+function BaseColors() {
+  this.colors = ['red', 'yellow', 'blue']
+}
+
+function LinkBaseColors() {}
+
+LinkBaseColors.prototype = new BaseColors()
+
+let color1 = new LinkBaseColors()
+let color2 = new LinkBaseColors()
+
+color1.colors.push('green')
+
+console.log(color1.colors) // [ 'red', 'yellow', 'blue', 'green' ]
+console.log(color2.colors) // [ 'red', 'yellow', 'blue', 'green' ]
+```
+
+还有一个问题是，无法在创建子类实例是给父类传递参数。
+
+### 盗用构造函数
+
+基本思路：在子类构造函数中调用父类构造函数，通过`apply`和`call`改变`this`指向的问题。
+
+```js
+function BaseColors() {
+  this.colors = ['red', 'yellow', 'blue']
+}
+
+function LinkBaseColors() {
+  BaseColors.apply(this)
+}
+
+let color1 = new LinkBaseColors()
+let color2 = new LinkBaseColors()
+
+color1.colors.push('green')
+
+console.log(color1.colors) // [ 'red', 'yellow', 'blue', 'green' ]
+console.log(color2.colors) // [ 'red', 'yellow', 'blue' ]
+```
+
+利用`call`或者`apply`可以在创建子类实例的时候，将父类`this`的值指向子类的实例；这样，就等于每个子类对象都有属于自己的属性，不会造成修改冲突。
+
+盗用构造函数同样有缺点，也就是使用构造函数模式自定义类型时，必须在构造函数内定义方法，因此函数不能重用。并且，子类也无法访问父类原型上的方法，因此所有类型只能使用构造函数模式。
+
+### 组合继承
+
+组合继承也叫经典继承，结合了原型链与盗用构造函数的有点。基本思路是：使用原型链继承原型上的属性和方法，而通过盗用构造函数继承实例属性。
+
+```js
+function Person(name) {
+  this.name = name
+  this.hobby = ['eat', 'run']
+}
+
+Person.prototype.sayName = function() {
+  console.log(this.name)
+}
+
+Person.prototype.sayHobby = function() {
+  console.log(this.hobby)
+}
+
+function Student(school, name) {
+  this.school = school
+  Person.call(this, name)
+}
+
+Student.prototype = new Person()
+
+let s1 = new Student('w3c', 'nick')
+let s2 = new Student('wc', 'mike')
+
+s1.hobby.push('swim')
+s1.sayName() // 'nick'
+s1.sayHobby() // [ 'eat', 'run', 'swim' ]
+
+s2.sayName() // 'mike'
+s2.sayHobby() // [ 'eat', 'run' ]
+```
+
+组合继承将子类的原型改为父类的实例，并且在子类构造函数中改变父类构造函数的指向，使其指向子类的实例。这样，子类不仅可以使用父类原型上的方法，也可以拥有自己的属性，并且可以向父类传递参数。
+
+### 寄生式继承
+
+寄生式继承的思想是：接收一个对象，然后克隆这个对象，对其进行增强，然后返回增强后的对象。
+
+```js
+function createEnhanceObject(obj) {
+  let clone = object(obj)
+  clone.sayName = function() {
+    console.log('Hi!')
+  }
+
+  return clone
+}
+```
+
+### 寄生式组合继承
+
+组合继承存在效率问题：父类构造函数始终都会被调用两次，一次是在创建子类原型时调用，一次是在子类构造函数中调用。
+
+寄生式组合继承，在就利用到了寄生式继承的特点，通过一个增强函数做到只调用一次父类构造函数。
+
+```js
+function enhance(superType, subType) {
+  let prototype = object(superType.prototype)
+  prototype.constructor = superType
+  subType.prototype = prototype
+}
+
+function Person(name) {
+  this.name = name
+  this.hobby = ['eat', 'run']
+}
+
+Person.prototype.sayName = function() {
+  console.log(this.name)
+}
+
+Person.prototype.sayHobby = function() {
+  console.log(this.hobby)
+}
+
+function Student(name, age) {
+  this.age = age
+  Person.call(this, name)
+}
+
+enhance(Person, student)
+
+Student.prototype.sayAge = function() {
+  console.log(this.age)
+}
+```
+
+通过`enhance`函数，便只调用了一次父类构造函数，效率更高，并且原型链任然保持不变。因此，寄生式组合继承可以算是引用类型继承的最佳模式。
